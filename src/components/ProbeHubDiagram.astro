@@ -1,0 +1,419 @@
+---
+/**
+ * Probes inside client networks push to a central hub; the hub never connects
+ * in. Drawn in SVG with two layouts (wide and narrow) that share one text
+ * description: only one is visible at a time and the narrow one is
+ * aria-hidden, so screen readers get the description once.
+ */
+---
+
+<figure class="diagram" aria-labelledby="diagram-caption">
+  <svg
+    class="diagram__wide"
+    viewBox="0 0 960 500"
+    role="img"
+    aria-labelledby="diagram-title diagram-desc"
+  >
+    <title id="diagram-title">Probes inside client networks push to a central hub</title>
+    <desc id="diagram-desc">
+      A central hub, for example on a cloud VPS, and two client networks behind NAT or a firewall
+      that allows no inbound connections. Client network A has one probe. Client network B has two
+      probes, one per network segment. Each probe checks the devices it can reach on its own network
+      and sends reports outbound to the hub, and asks the hub for new checks and commands over the
+      same outbound connection. The hub never opens a connection into a client network, so no
+      inbound firewall rules are needed. Technicians use the hub's web UI over HTTPS.
+    </desc>
+    <defs>
+      <marker
+        id="arrow-w"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path d="M0 0 10 5 0 10z" class="d-arrowhead"></path>
+      </marker>
+      <marker
+        id="arrow-w-muted"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path d="M0 0 10 5 0 10z" class="d-arrowhead-muted"></path>
+      </marker>
+    </defs>
+
+    <!-- Client network A: one probe -->
+    <rect x="12" y="16" width="440" height="170" rx="12" class="d-net"></rect>
+    <text x="32" y="44" class="d-label">
+      Client network A
+    </text>
+    <text x="32" y="63" class="d-sub">
+      behind NAT / firewall
+    </text>
+    <g class="d-dev">
+      <rect x="32" y="84" width="132" height="30" rx="6"></rect>
+      <text x="98" y="104" text-anchor="middle">
+        server · NAS
+      </text>
+      <rect x="32" y="122" width="132" height="30" rx="6"></rect>
+      <text x="98" y="142" text-anchor="middle">
+        switch · printer
+      </text>
+    </g>
+    <path d="M248 118 H176" class="d-check" marker-end="url(#arrow-w-muted)"></path>
+    <text x="212" y="108" text-anchor="middle" class="d-tiny">
+      checks
+    </text>
+    <rect x="248" y="86" width="176" height="64" rx="10" class="d-probe"></rect>
+    <text x="336" y="113" text-anchor="middle" class="d-node">
+      probe
+    </text>
+    <text x="336" y="133" text-anchor="middle" class="d-sub">
+      system service
+    </text>
+    <line x1="452" y1="30" x2="452" y2="172" class="d-wall"></line>
+
+    <!-- Client network B: two segments, one probe each -->
+    <rect x="12" y="206" width="440" height="270" rx="12" class="d-net"></rect>
+    <text x="32" y="234" class="d-label">
+      Client network B
+    </text>
+    <text x="32" y="253" class="d-sub">
+      two segments, a probe in each
+    </text>
+    <g class="d-dev">
+      <rect x="32" y="282" width="132" height="30" rx="6"></rect>
+      <text x="98" y="302" text-anchor="middle">
+        office LAN
+      </text>
+      <rect x="32" y="392" width="132" height="30" rx="6"></rect>
+      <text x="98" y="412" text-anchor="middle">
+        server VLAN
+      </text>
+    </g>
+    <path d="M248 297 H176" class="d-check" marker-end="url(#arrow-w-muted)"></path>
+    <path d="M248 407 H176" class="d-check" marker-end="url(#arrow-w-muted)"></path>
+    <text x="212" y="287" text-anchor="middle" class="d-tiny">
+      checks
+    </text>
+    <text x="212" y="397" text-anchor="middle" class="d-tiny">
+      checks
+    </text>
+    <rect x="248" y="270" width="176" height="56" rx="10" class="d-probe"></rect>
+    <text x="336" y="295" text-anchor="middle" class="d-node">
+      probe
+    </text>
+    <text x="336" y="314" text-anchor="middle" class="d-sub">
+      system service
+    </text>
+    <rect x="248" y="380" width="176" height="56" rx="10" class="d-probe"></rect>
+    <text x="336" y="405" text-anchor="middle" class="d-node">
+      probe
+    </text>
+    <text x="336" y="424" text-anchor="middle" class="d-sub">
+      system service
+    </text>
+    <line x1="452" y1="220" x2="452" y2="462" class="d-wall"></line>
+
+    <!-- Outbound flows -->
+    <path d="M424 118 C 540 118, 560 200, 640 210" class="d-flow" marker-end="url(#arrow-w)"></path>
+    <path d="M424 298 C 530 298, 560 226, 640 222" class="d-flow" marker-end="url(#arrow-w)"></path>
+    <path d="M424 408 C 540 408, 570 240, 640 234" class="d-flow" marker-end="url(#arrow-w)"></path>
+    <text x="548" y="132" text-anchor="middle" class="d-tiny">
+      outbound only
+    </text>
+
+    <!-- No hub-initiated connection -->
+    <path d="M640 296 C 590 340, 540 352, 462 352" class="d-blocked"></path>
+    <g class="d-x" transform="translate(560 346)">
+      <circle r="10"></circle>
+      <path d="M-4 -4 4 4 M4 -4 -4 4"></path>
+    </g>
+    <text x="578" y="350" class="d-tiny">
+      hub never connects in
+    </text>
+
+    <!-- Hub -->
+    <rect x="644" y="150" width="300" height="150" rx="12" class="d-hub"></rect>
+    <text x="794" y="186" text-anchor="middle" class="d-node">
+      central hub
+    </text>
+    <text x="794" y="208" text-anchor="middle" class="d-sub">
+      e.g. a cloud VPS
+    </text>
+    <text x="794" y="236" text-anchor="middle" class="d-sub">
+      verify · store · alert
+    </text>
+    <text x="794" y="256" text-anchor="middle" class="d-sub">
+      web UI · API · SQLite
+    </text>
+    <text x="794" y="282" text-anchor="middle" class="d-tiny">
+      answers each request: checks, commands
+    </text>
+
+    <rect x="704" y="400" width="180" height="50" rx="10" class="d-net"></rect>
+    <text x="794" y="431" text-anchor="middle" class="d-label">
+      technicians
+    </text>
+    <path
+      d="M794 396 V304"
+      class="d-check"
+      marker-end="url(#arrow-w-muted)"
+      marker-start="url(#arrow-w-muted)"
+    ></path>
+    <text x="806" y="356" class="d-tiny">
+      HTTPS
+    </text>
+  </svg>
+
+  <svg class="diagram__narrow" viewBox="0 0 360 700" aria-hidden="true" focusable="false">
+    <defs>
+      <marker
+        id="arrow-n"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path d="M0 0 10 5 0 10z" class="d-arrowhead"></path>
+      </marker>
+      <marker
+        id="arrow-n-muted"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path d="M0 0 10 5 0 10z" class="d-arrowhead-muted"></path>
+      </marker>
+    </defs>
+    <rect x="8" y="8" width="344" height="262" rx="12" class="d-net"></rect>
+    <text x="26" y="36" class="d-label">
+      Each client network
+    </text>
+    <text x="26" y="56" class="d-sub">
+      behind NAT / firewall
+    </text>
+    <g class="d-dev">
+      <rect x="26" y="76" width="96" height="30" rx="6"></rect>
+      <text x="74" y="96" text-anchor="middle">
+        server
+      </text>
+      <rect x="132" y="76" width="96" height="30" rx="6"></rect>
+      <text x="180" y="96" text-anchor="middle">
+        switch
+      </text>
+      <rect x="238" y="76" width="96" height="30" rx="6"></rect>
+      <text x="286" y="96" text-anchor="middle">
+        NAS
+      </text>
+    </g>
+    <path d="M180 150 V112" class="d-check" marker-end="url(#arrow-n-muted)"></path>
+    <text x="190" y="136" class="d-tiny">
+      local checks
+    </text>
+    <rect x="80" y="152" width="200" height="64" rx="10" class="d-probe"></rect>
+    <text x="180" y="179" text-anchor="middle" class="d-node">
+      probe
+    </text>
+    <text x="180" y="200" text-anchor="middle" class="d-sub">
+      system service
+    </text>
+    <text x="240" y="244" text-anchor="middle" class="d-tiny">
+      one or more per network
+    </text>
+    <line x1="20" y1="270" x2="340" y2="270" class="d-wall"></line>
+    <path d="M150 216 V440" class="d-flow" marker-end="url(#arrow-n)"></path>
+    <text x="140" y="330" text-anchor="end" class="d-tiny">
+      outbound
+    </text>
+    <text x="140" y="346" text-anchor="end" class="d-tiny">
+      only
+    </text>
+    <path d="M250 440 V280" class="d-blocked"></path>
+    <g class="d-x" transform="translate(250 356)">
+      <circle r="10"></circle>
+      <path d="M-4 -4 4 4 M4 -4 -4 4"></path>
+    </g>
+    <text x="266" y="330" class="d-tiny">
+      hub never
+    </text>
+    <text x="266" y="346" class="d-tiny">
+      connects in
+    </text>
+    <rect x="40" y="444" width="280" height="124" rx="12" class="d-hub"></rect>
+    <text x="180" y="478" text-anchor="middle" class="d-node">
+      central hub
+    </text>
+    <text x="180" y="500" text-anchor="middle" class="d-sub">
+      e.g. a cloud VPS
+    </text>
+    <text x="180" y="526" text-anchor="middle" class="d-sub">
+      verify · store · alert
+    </text>
+    <text x="180" y="548" text-anchor="middle" class="d-sub">
+      web UI · API · SQLite
+    </text>
+    <path
+      d="M180 572 V636"
+      class="d-check"
+      marker-end="url(#arrow-n-muted)"
+      marker-start="url(#arrow-n-muted)"
+    ></path>
+    <text x="192" y="610" class="d-tiny">
+      HTTPS
+    </text>
+    <rect x="90" y="640" width="180" height="46" rx="10" class="d-net"></rect>
+    <text x="180" y="669" text-anchor="middle" class="d-label">
+      technicians
+    </text>
+  </svg>
+
+  <figcaption id="diagram-caption">
+    Every connection starts at a probe. A probe sends its reports out to the hub and keeps a request
+    open so the hub can answer with new checks or commands. The hub only ever answers; it never
+    opens a connection into a client network.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram {
+    margin: 0;
+    padding: var(--space-5);
+    background: var(--bt-bg-sunken);
+    border: 1px solid var(--bt-line);
+    border-radius: var(--radius-l);
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: var(--font-mono);
+  }
+  .diagram__narrow {
+    display: none;
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+  @media (max-width: 40rem) {
+    .diagram {
+      padding: var(--space-3);
+    }
+    .diagram__wide {
+      display: none;
+    }
+    .diagram__narrow {
+      display: block;
+    }
+  }
+  figcaption {
+    margin-top: var(--space-4);
+    color: var(--bt-text-muted);
+    font-size: 0.95rem;
+    max-width: var(--measure);
+  }
+  .d-net {
+    fill: var(--bt-bg);
+    stroke: var(--bt-line-strong);
+    stroke-dasharray: 5 5;
+  }
+  .d-hub {
+    fill: var(--bt-bg-raised);
+    stroke: var(--bt-accent);
+    stroke-width: 1.5;
+  }
+  .d-probe {
+    fill: var(--bt-bg-raised);
+    stroke: var(--bt-ok);
+    stroke-width: 1.5;
+  }
+  .d-dev rect {
+    fill: var(--bt-bg-raised);
+    stroke: var(--bt-line);
+  }
+  .d-dev .d-ghost {
+    fill: none;
+    stroke-dasharray: 3 4;
+  }
+  .d-dev text {
+    fill: var(--bt-text-muted);
+    font-size: 12px;
+  }
+  .d-label {
+    fill: var(--bt-text);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .d-node {
+    fill: var(--bt-text);
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .d-sub {
+    fill: var(--bt-text-muted);
+    font-size: 12px;
+  }
+  .d-tiny {
+    fill: var(--bt-text-muted);
+    font-size: 11px;
+  }
+  .d-check {
+    fill: none;
+    stroke: var(--bt-text-muted);
+    stroke-width: 1.4;
+  }
+  .d-wall {
+    stroke: var(--bt-down);
+    stroke-width: 3;
+    stroke-dasharray: 2 5;
+    stroke-linecap: round;
+  }
+  .d-flow {
+    fill: none;
+    stroke: var(--bt-accent);
+    stroke-width: 2.2;
+    stroke-dasharray: 8 6;
+  }
+  .d-arrowhead {
+    fill: var(--bt-accent);
+  }
+  .d-arrowhead-muted {
+    fill: var(--bt-text-muted);
+  }
+  .d-blocked {
+    fill: none;
+    stroke: var(--bt-down);
+    stroke-width: 1.6;
+    stroke-dasharray: 3 5;
+  }
+  .d-x circle {
+    fill: var(--bt-bg-sunken);
+    stroke: var(--bt-down);
+    stroke-width: 1.6;
+  }
+  .d-x path {
+    stroke: var(--bt-down);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .d-flow {
+      animation: flow 1.6s linear 3; /* stops within 5 s (WCAG 2.2.2) */
+    }
+    @keyframes flow {
+      to {
+        stroke-dashoffset: -28;
+      }
+    }
+  }
+</style>

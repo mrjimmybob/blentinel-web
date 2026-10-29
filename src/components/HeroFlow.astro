@@ -1,0 +1,131 @@
+---
+/**
+ * The hero's at-a-glance picture: client network → local probe → outbound
+ * connection → central hub. Plain HTML so it reflows from a row (wide) to a
+ * column (narrow) without a second drawing.
+ */
+---
+
+<figure class="flow" aria-labelledby="flow-caption">
+  <ol class="flow__steps">
+    <li class="flow__net">
+      <span class="flow__kicker">Client network</span>
+      <span class="flow__devices" aria-hidden="true">
+        <span>server</span>
+        <span>switch</span>
+        <span>NAS</span>
+      </span>
+      <span class="flow__probe">
+        <strong>Blentinel probe</strong>
+        <span>checks local devices</span>
+      </span>
+    </li>
+    <li class="flow__link">
+      <span class="flow__line" aria-hidden="true"></span>
+      <span class="flow__label">outbound connection</span>
+      <span class="flow__no">no inbound rules</span>
+    </li>
+    <li class="flow__hub">
+      <span class="flow__kicker">Central hub</span>
+      <strong>dashboard · alerts</strong>
+      <span>e.g. on a cloud VPS</span>
+    </li>
+  </ol>
+  <figcaption id="flow-caption" class="visually-hidden">
+    A probe inside the client network checks local devices and connects outbound to the central hub.
+    The client network needs no inbound firewall rules.
+  </figcaption>
+</figure>
+
+<style>
+  .flow {
+    margin: 0;
+    padding: var(--space-5);
+    background: var(--bt-bg-raised);
+    border: 1px solid var(--bt-line);
+    border-radius: var(--radius-l);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .flow__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .flow__kicker {
+    display: block;
+    color: var(--bt-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    margin-bottom: var(--space-3);
+  }
+  .flow__net {
+    padding: var(--space-4);
+    border: 1px dashed var(--bt-line-strong);
+    border-radius: var(--radius-m);
+    background: var(--bt-bg);
+  }
+  .flow__devices {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+  }
+  .flow__devices span {
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--bt-line);
+    border-radius: var(--radius-s);
+    color: var(--bt-text-muted);
+  }
+  .flow__probe,
+  .flow__hub {
+    display: grid;
+    gap: 0.15rem;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--bt-bg-raised);
+    color: var(--bt-text-muted);
+  }
+  .flow__probe {
+    border: 1.5px solid var(--bt-ok);
+  }
+  .flow__probe strong,
+  .flow__hub strong {
+    color: var(--bt-text);
+    font-size: 0.95rem;
+  }
+  .flow__hub {
+    border: 1.5px solid var(--bt-accent);
+  }
+  .flow__hub .flow__kicker {
+    margin-bottom: var(--space-1);
+  }
+  .flow__link {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    padding: var(--space-3) 0 var(--space-3) 2.25rem;
+    color: var(--bt-accent);
+  }
+  .flow__line {
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    bottom: 0.35rem;
+    border-left: 2px dashed var(--bt-accent);
+  }
+  .flow__line::after {
+    content: '';
+    position: absolute;
+    left: -7px;
+    bottom: -6px;
+    border: 6px solid transparent;
+    border-top: 8px solid var(--bt-accent);
+  }
+  .flow__no {
+    color: var(--bt-text-muted);
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+title: Architecture
+description: The Blentinel probe and hub, how a report travels, and how the hub decides status.
+---
+
+import ProbeHubDiagram from '../../../components/ProbeHubDiagram.astro';
+
+A central **hub** monitors many client networks through **probes** that run inside those networks and **push** results to it. Everything is written in Rust (edition 2024) in one Cargo workspace.
+
+<ProbeHubDiagram />
+
+## Deployment model
+
+- **One central hub.** It needs an address every probe can reach outbound, typically a cloud VPS or a server with a public address. Supported on Linux (x86_64, ARM64) with systemd; Windows works on a best-effort basis.
+- **At least one probe inside each monitored network.** The probe is one self-contained executable, run as a system service: a systemd unit on Linux, a Windows service on Windows. It needs no separate runtime, database or service: its offline buffer is an SQLite file in its own folder, using SQLite compiled into the binary. Signed probe releases can be built for x86_64 and ARM64 Linux, ARMv7 Linux (Raspberry Pi) and x86_64 Windows.
+- **What a probe can check is what it can reach.** It checks devices and services on its network, and its own machine. If a network is split into segments or VLANs that one machine can't reach, install a probe in each.
+- **All connections are outbound from the probe.** It sends reports, and keeps one request open (renewed every 25 seconds) through which the hub answers with commands. New checks and updates come back in the hub's answers to reports. The hub never initiates a connection into a client network, so no inbound firewall rules are needed there.
+
+| Crate           | What it is                                                                                                                                                 |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `probe`         | The agent: runs the checks its hub gives it, signs and seals each report, pushes it, and buffers while the hub is unreachable.                             |
+| `hub`           | The server: authenticates and stores reports, tracks probe liveness, sends alerts, and serves the web UI and a JSON API. One binary, with the UI embedded. |
+| `common`        | Shared by both: report models, protocol rules, sealing and signing code, the hub's answer, and the checks with their validation.                           |
+| `blentinelmake` | The developer build and packaging tool.                                                                                                                    |
+
+## The probe
+
+The probe has **no config file**. Its checks and report interval are records on the hub, sent in the hub's signed answer to a report and cached in `config.json`. Every interval the probe:
+
+1. Runs its checks in parallel, each limited to 30 seconds.
+2. Builds a status report: one result per check, the config revision it runs, and a timestamp.
+3. **Signs** it with its Ed25519 identity key and **seals** it for the hub.
+4. Hands it to its **outbox**. With no backlog it sends directly. If the hub is unreachable or failing, the report is kept and retried, oldest first. The buffer is capped at 7 days and 20,000 reports.
+5. If the hub's answer carries a **new config**, validates it with the same rules the hub uses, saves it and starts a new cycle at once. A config it can't use is reported back as rejected.
+6. If the answer **offers a release** an admin approved, it verifies the signature against the release keys compiled into it, downloads and self-tests the new binary, then switches to it. A watchdog rolls back a version that keeps crashing or doesn't report.
+
+Between reports a probe keeps one request open to the hub (renewed every 25 seconds) to learn of commands, such as **Run checks now**, at once. The hub still only ever answers requests the probe made.
+
+## The hub
+
+Accepting a report (`POST /api/report`) runs in this order:
+
+1. **Open the seal** with the hub's X25519 key. Failure: `401`.
+2. Check the **protocol version**, then parse. Failure: `400`.
+3. Require a **valid signature** from an **enrolled**, non-revoked probe. Failure: `403`. The report is filed under the company and site in the probe's record, whatever the report says.
+4. Require a **timestamp** at most 5 minutes in the future and at most 7 days old. Failure: `422`.
+5. **Store** it only if newer than the probe's latest stored report. Failure: `409`.
+6. Refresh the probe's heartbeat and evaluate **alerts**.
+7. Answer with a **signed, sealed acknowledgement** that carries changed checks, an approved release and pending commands.
+
+### Status and severity
+
+Each result gets a status on the hub when it arrives: **Down** if the probe says the check failed or a down threshold is reached, **Warning** if a warning threshold is reached, otherwise **Up**. Thresholds come from the check, its site, its company, the hub default, then a built-in default. Results from a probe that has stopped reporting are shown as **Unknown**.
+
+Probes and companies are ranked **critical**, **degraded** (a probe has stopped reporting), **warning** or **healthy**. A company is as bad as its worst probe.
+
+### Data and interface
+
+The hub stores everything in one **SQLite** file, with versioned migrations applied at startup. Its web UI is built with Leptos, rendered on the server and hydrated with WebAssembly, and polls the JSON API every 15 seconds. Every API route checks the user's permission.
+
+Full details: [architecture.md](https://github.com/mrjimmybob/blentinel/blob/main/docs/architecture.md) and [the probe protocol](https://github.com/mrjimmybob/blentinel/blob/main/docs/reference/protocol.md).

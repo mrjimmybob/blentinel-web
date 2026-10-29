@@ -1,0 +1,602 @@
+---
+import Base from '../layouts/Base.astro';
+import Feature from '../components/Feature.astro';
+import HeroFlow from '../components/HeroFlow.astro';
+import HubScreenshot from '../components/HubScreenshot.astro';
+import ProbeHubDiagram from '../components/ProbeHubDiagram.astro';
+import { repoFile, site } from '../data/site';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const docs = (path = ''): string => `${base}docs/${path}`;
+---
+
+<Base>
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div class="hero__copy reveal">
+        <p class="eyebrow">Open source · Rust · MIT · pre-alpha</p>
+        <h1>Self-hosted monitoring for the networks you look after.</h1>
+        <p class="hero__lede">
+          Blentinel is an open-source application for network and infrastructure monitoring. One hub
+          shows the availability and health of servers, devices and services across many locations,
+          and alerts you when something fails. MSPs, distributed IT teams and administrators of
+          remote infrastructure get that view from a single dashboard.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href={site.repo}>
+            View on GitHub
+          </a>
+          <a class="btn" href={docs()}>
+            Read the docs
+          </a>
+        </div>
+      </div>
+      <div class="reveal hero__visual">
+        <HeroFlow />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why" aria-labelledby="why-title">
+    <div class="wrap why">
+      <div class="section__head why__copy">
+        <p class="eyebrow">Why it exists</p>
+        <h2 id="why-title">Independent networks are hard to watch from one place</h2>
+        <p>
+          Many monitoring deployments live inside the same network they watch. That fits a single
+          site. It is less straightforward when the networks belong to different customers, sit in
+          other offices, or sit behind NAT and restrictive firewalls — and you cannot, or would
+          rather not, keep an inbound path into each of them.
+        </p>
+        <p>
+          Blentinel splits the work. A <strong>probe</strong> is a small service you install inside
+          each monitored network: it runs checks locally and sends results outbound. A&nbsp;
+          <strong>hub</strong> is the central application that receives those reports, keeps the
+          history, serves the web dashboard and sends alerts. The hub never opens a connection into
+          a monitored network; probes make the outbound requests, and the hub only answers.
+        </p>
+        <p>
+          That gives you a single place to watch many sites without inbound firewall rules or VPN
+          tunnels into each of them. You still have to install at least one probe inside every
+          network you want to see. Isolated segments or VLANs may need a probe of their own. The hub
+          needs an address those probes can reach outbound, such as a cloud VPS or a public address
+          on your own server.
+        </p>
+      </div>
+      <ul class="why__points">
+        <li>
+          <span class="why__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="12" r="2.25"></circle>
+              <circle cx="18" cy="6" r="2.25"></circle>
+              <circle cx="18" cy="18" r="2.25"></circle>
+              <path d="M8.1 11.1 15.9 7.1M8.1 12.9 15.9 16.9"></path>
+            </svg>
+          </span>
+          <div>
+            <h3>Isolated networks, unified visibility</h3>
+            <p>Monitor separate customers, sites and VLANs from a single dashboard.</p>
+          </div>
+        </li>
+        <li>
+          <span class="why__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3 5 6.5v4.8c0 4.3 2.9 8.2 7 9.2 4.1-1 7-4.9 7-9.2V6.5L12 3Z"></path>
+              <path d="m9.2 12.1 1.9 1.9 3.7-3.8"></path>
+            </svg>
+          </span>
+          <div>
+            <h3>No inbound firewall rules</h3>
+            <p>Probes initiate connections. The hub never connects into client networks.</p>
+          </div>
+        </li>
+        <li>
+          <span class="why__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="5" rx="1.2"></rect>
+              <rect x="4" y="10.5" width="16" height="5" rx="1.2"></rect>
+              <rect x="4" y="17" width="16" height="3" rx="1"></rect>
+            </svg>
+          </span>
+          <div>
+            <h3>One hub, many locations</h3>
+            <p>See availability, health and alerts across your infrastructure in one place.</p>
+          </div>
+        </li>
+        <li>
+          <span class="why__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 14.5c0-3.6 2.4-6.4 5.5-7.4-.2 2.1.6 4.2 2.3 5.6 1.6 1.3 2.7 3.2 2.7 5.3 0 1.7-1.2 3-3 3.5-3.5-1-7.5-3.2-7.5-7Z"></path>
+              <path d="M12.5 7.1C13.8 5.2 15.9 4 18.2 4c.1 2.1-.8 4.1-2.4 5.4"></path>
+            </svg>
+          </span>
+          <div>
+            <h3>Lightweight by design</h3>
+            <p>Small, self-contained probes that run alongside existing services.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="design" aria-labelledby="design-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">How it is built</p>
+        <h2 id="design-title">Built to monitor, not to get in the way.</h2>
+        <p>
+          The architecture follows a few rules that stay fixed. They are written down in{' '}
+          <a href={repoFile('docs/PRINCIPLES.md')}>PRINCIPLES.md</a>.
+        </p>
+      </div>
+      <div class="principles">
+        <article>
+          <h3>Minimal dependencies</h3>
+          <p>
+            A standard deployment is self-contained binaries. There is no separate application
+            runtime, database server or extra stack to stand up. The hub ships its web interface and
+            stores data in embedded SQLite. The probe runs on its own.
+          </p>
+        </article>
+        <article>
+          <h3>Small, simple deployment</h3>
+          <p>
+            The probe is one binary, installed as a background service on Windows or Linux. The hub
+            is the same idea for a self-hosted server: one binary you run yourself. Checks and
+            day-to-day management happen in the hub’s UI, not by editing files on client machines.
+          </p>
+        </article>
+        <article>
+          <h3>Low resource overhead</h3>
+          <p>
+            The design aims to keep CPU, memory and network use down, especially on the machines
+            that run probes. Monitoring should stay in the background and leave the client’s systems
+            to their real work.
+          </p>
+        </article>
+        <article>
+          <h3>Security by design</h3>
+          <p>
+            Probes initiate every connection, so the hub never needs a path into a client network.
+            Each report is signed and sealed end to end, independently of TLS. The hub enrols probes
+            itself and decides which company they report for.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="what" aria-labelledby="what-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">What it does</p>
+        <h2 id="what-title">Visibility, alerts and control from one place</h2>
+        <p>
+          Once probes are reporting, the hub is where you watch status, decide what to check and who
+          gets told when something fails.
+        </p>
+      </div>
+      <div class="grid">
+        <Feature
+          title="Check from inside the network"
+          href={docs('reference/checks/')}
+          linkLabel="All check kinds"
+        >
+          <p>
+            Probes check what they can reach locally: hosts, web services, ports, DNS, certificates,
+            SNMP devices, databases, UPSes, and their own machine’s disks, services and updates.
+          </p>
+        </Feature>
+        <Feature
+          title="Know when something breaks"
+          href={repoFile('docs/guide/alerting.md')}
+          linkLabel="Alerting guide"
+        >
+          <p>
+            The hub decides Up, Warning or Down against limits you set, and alerts by e-mail,
+            webhooks, Teams, Slack, Discord, Telegram or ntfy, with incidents and maintenance
+            windows.
+          </p>
+        </Feature>
+        <Feature
+          title="Keep clients apart"
+          href={repoFile('docs/guide/users.md')}
+          linkLabel="Users and roles"
+        >
+          <p>
+            Companies, sites and role-based accounts. The hub, not the probe, decides which company
+            a probe reports for, and each user sees only the companies they’re given.
+          </p>
+        </Feature>
+        <Feature
+          title="Manage checks centrally"
+          href={docs('getting-started/probe/')}
+          linkLabel="Giving a probe checks"
+        >
+          <p>
+            Checks are set on the hub and delivered to the probe in the hub’s signed answers. There
+            is no probe config file to edit on the client’s machine.
+          </p>
+        </Feature>
+        <Feature
+          title="Probes that update safely"
+          href={docs('security/')}
+          linkLabel="Security model"
+        >
+          <p>
+            Probes update from their hub only to releases signed with your own release key, canaries
+            first, and roll back on their own if the new version fails.
+          </p>
+        </Feature>
+        <Feature
+          title="A probe that keeps working offline"
+          href={docs('architecture/')}
+          linkLabel="Architecture"
+        >
+          <p>
+            If the hub is unreachable, the probe keeps checking on its last known configuration and
+            buffers undelivered reports until it can send them again.
+          </p>
+        </Feature>
+      </div>
+      <p class="note">
+        Blentinel watches availability and health: is it up, is it answering correctly, is it about
+        to run out of disk. It is not a metrics database, a log platform or an APM tool.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">Probes connect out. The hub only answers.</h2>
+        <p>
+          A probe needs two things: outbound access to the hub, and network access to the systems it
+          checks. Add more probes for separate segments or sites.
+        </p>
+      </div>
+      <ProbeHubDiagram />
+      <ol class="steps">
+        <li>
+          <h3>Install a probe inside</h3>
+          <p>
+            <strong>Add probe</strong> on the hub gives a one-line command. Run it on a machine in
+            the client network: it installs the probe as a system service and enrolls it with that
+            hub.
+          </p>
+        </li>
+        <li>
+          <h3>Check locally</h3>
+          <p>
+            Every interval the probe checks the devices and services it can reach on its network,
+            and its own machine.
+          </p>
+        </li>
+        <li>
+          <h3>Report outbound</h3>
+          <p>
+            It sends a signed, encrypted report out to the hub, and buffers reports while the hub is
+            unreachable.
+          </p>
+        </li>
+        <li>
+          <h3>Get changes in the answer</h3>
+          <p>
+            New checks, approved updates and commands such as <strong>Run checks now</strong> come
+            back in the hub’s answers to the probe’s own requests.
+          </p>
+        </li>
+      </ol>
+      <p class="more">
+        <a href={docs('architecture/')}>Architecture in detail</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="ui" aria-labelledby="ui-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">The hub</p>
+        <h2 id="ui-title">Every client on one dashboard</h2>
+        <p>
+          Technicians open the hub’s web UI over HTTPS. Companies are sorted by severity, with
+          uptime history and every probe’s checks a click away.
+        </p>
+      </div>
+      <HubScreenshot />
+    </div>
+  </section>
+
+  <section class="section" id="start" aria-labelledby="start-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">Getting started</p>
+        <h2 id="start-title">From hub to first report</h2>
+        <p>
+          Blentinel is pre-alpha: usable, but upgrades may require resetting the hub’s database.
+          Read the <a href={repoFile('CHANGELOG.md')}>changelog</a> before upgrading.
+        </p>
+      </div>
+      <ol class="start">
+        <li>
+          <h3>Build and install the hub</h3>
+          <p>
+            Today, build from source (Rust and cargo-leptos), then install it as a service on a
+            Linux server with systemd, such as a cloud VPS that your probes can reach.
+          </p>
+          <pre
+            class="cmd"
+            tabindex="0"
+            aria-label="Build and install the hub"
+          ><code>cargo build -p blentinelmake --release
+./target/release/blentinelmake release keygen
+./target/release/blentinelmake hub publish --with-probes x86_64-unknown-linux-musl,x86_64-pc-windows-msvc
+# copy publish/hub-&lt;date&gt;/app/ to the server, then in it:
+sudo ./hub install</code></pre>
+          <p class="small">
+            Once releases are published on GitHub, a signed installer script will be available. See{' '}
+            <a href={docs('getting-started/hub/')}>Install the hub</a>.
+          </p>
+        </li>
+        <li>
+          <h3>Install a probe inside each network</h3>
+          <p>
+            Add a company and a site in the web UI, then <strong>Add probe</strong>. Run the command
+            it gives you on a Linux (systemd) or Windows machine in that network: it checks the
+            download’s SHA-256, enrolls the probe and installs it as a service.
+          </p>
+        </li>
+        <li>
+          <h3>Give it checks</h3>
+          <p>
+            On the probe’s page, add checks, apply a template or accept the hub’s suggestions. The
+            probe picks them up with its next report.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="cta" aria-labelledby="cta-title">
+    <div class="wrap cta__inner">
+      <div>
+        <h2 id="cta-title">Monitor your networks. Stay in control.</h2>
+        <p>Blentinel is free, open-source monitoring software you can host on your own infrastructure..</p>
+      </div>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href={site.repo}>
+          View on GitHub
+        </a>
+        <a class="btn" href={docs('getting-started/hub/')}>
+          Installation guide
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: var(--space-9) var(--space-8);
+    position: relative;
+    isolation: isolate;
+  }
+  /* A faint ruled grid, faded out towards the edges: a nod to log paper. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(var(--bt-line) 1px, transparent 1px) 0 0 / 100% 40px;
+    opacity: 0.45;
+    mask-image: radial-gradient(ellipse 70% 80% at 30% 40%, #000 20%, transparent 75%);
+    pointer-events: none;
+  }
+  .hero__grid {
+    position: relative;
+    display: grid;
+    gap: var(--space-7);
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+  }
+  .hero h1 {
+    margin-top: var(--space-4);
+    font-size: clamp(2.2rem, 1.3rem + 3.6vw, 3.75rem);
+    letter-spacing: -0.03em;
+  }
+  .hero__lede {
+    margin-top: var(--space-5);
+    font-size: 1.2rem;
+    color: var(--bt-text-muted);
+    max-width: 40rem;
+  }
+  .hero__lede strong {
+    color: var(--bt-text);
+  }
+  .hero__cta {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .why {
+    display: grid;
+    gap: var(--space-7);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+  .why__copy {
+    max-width: none;
+    margin-bottom: 0;
+  }
+  .why__points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  .why__points li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    align-items: start;
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--bt-line);
+  }
+  .why__points li:first-child {
+    padding-top: 0;
+  }
+  .why__points li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .why__icon {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--bt-accent);
+    margin-top: 0.15rem;
+  }
+  .why__points h3 {
+    font-size: 1.15rem;
+    letter-spacing: -0.015em;
+    margin: 0 0 var(--space-2);
+  }
+  .why__points p {
+    margin: 0;
+    color: var(--bt-text-muted);
+    font-size: 0.98rem;
+  }
+  .grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+  .more {
+    margin-top: var(--space-6);
+  }
+  .principles {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .principles article {
+    padding: var(--space-5);
+    border: 1px solid var(--bt-line);
+    border-radius: var(--radius-l);
+    background: var(--bt-bg-raised);
+  }
+  .principles h3 {
+    font-size: 1.05rem;
+    margin-bottom: var(--space-3);
+  }
+  .principles p {
+    color: var(--bt-text-muted);
+    font-size: 0.98rem;
+  }
+  .steps,
+  .start {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-7) 0 0;
+    display: grid;
+    gap: var(--space-5);
+    counter-reset: step;
+  }
+  .steps {
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .steps li,
+  .start li {
+    counter-increment: step;
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+  .steps li::before,
+  .start li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-mono);
+    color: var(--bt-accent);
+    font-size: 0.85rem;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--bt-line);
+  }
+  .steps h3,
+  .start h3 {
+    font-size: 1.1rem;
+  }
+  .steps p,
+  .start p {
+    color: var(--bt-text-muted);
+    font-size: 0.98rem;
+  }
+  .start {
+    max-width: 50rem;
+    margin-top: 0;
+  }
+  .start li {
+    gap: var(--space-3);
+  }
+  .small {
+    font-size: 0.9rem !important;
+  }
+  .hero__visual {
+    animation-delay: 0.1s;
+  }
+  .cta {
+    padding-block: var(--space-8);
+    border-top: 1px solid var(--bt-line);
+    background: var(--bt-bg-raised);
+  }
+  .cta__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+  }
+  .cta h2 {
+    font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2rem);
+  }
+  .cta p {
+    margin-top: var(--space-2);
+    color: var(--bt-text-muted);
+  }
+  .cta .hero__cta {
+    margin-top: 0;
+  }
+  .note {
+    margin-top: var(--space-6);
+    max-width: var(--measure);
+    color: var(--bt-text-muted);
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--bt-line-strong);
+  }
+  @media (max-width: 56rem) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .why {
+      grid-template-columns: 1fr;
+    }
+    .hero {
+      padding-block: var(--space-7);
+    }
+    .section {
+      padding-block: var(--space-8);
+    }
+  }
+  @media (max-width: 40rem) {
+    .principles {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 26rem) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

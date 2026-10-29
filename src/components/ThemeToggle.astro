@@ -1,0 +1,67 @@
+---
+/** Toggles dark/light. Persists under Starlight's key so the docs follow. */
+---
+
+<button class="theme-toggle" type="button" aria-label="Switch to light theme" data-theme-toggle>
+  <svg class="icon icon--sun" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+    <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+    <path
+      d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+    ></path>
+  </svg>
+  <svg class="icon icon--moon" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+    <path
+      d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+    ></path>
+  </svg>
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const root = document.documentElement;
+  const label = (): void => {
+    const next = root.dataset['theme'] === 'light' ? 'dark' : 'light';
+    button?.setAttribute('aria-label', `Switch to ${next} theme`);
+  };
+  label();
+  button?.addEventListener('click', () => {
+    const next = root.dataset['theme'] === 'light' ? 'dark' : 'light';
+    root.dataset['theme'] = next;
+    localStorage.setItem('starlight-theme', next);
+    label();
+  });
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-m);
+    border: 1px solid var(--bt-line);
+    background: transparent;
+    color: var(--bt-text-muted);
+    cursor: pointer;
+  }
+  .theme-toggle:hover {
+    color: var(--bt-text);
+    border-color: var(--bt-line-strong);
+  }
+  .icon--moon {
+    display: none;
+  }
+  :global([data-theme='light']) .icon--sun {
+    display: none;
+  }
+  :global([data-theme='light']) .icon--moon {
+    display: block;
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+interface Props {
+  title: string;
+  /** Optional "read more" link. Base-relative or absolute. */
+  href?: string;
+  linkLabel?: string;
+}
+const { title, href, linkLabel = 'Learn more' } = Astro.props;
+---
+
+<article class="feature">
+  <h3>{title}</h3>
+  <slot />
+  {href && (
+    <a class="feature__link" href={href}>
+      {linkLabel}
+      <span class="visually-hidden">: {title}</span>
+      <span aria-hidden="true"> →</span>
+    </a>
+  )}
+</article>
+
+<style>
+  .feature {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--bt-bg-raised);
+    border: 1px solid var(--bt-line);
+    border-radius: var(--radius-l);
+  }
+  h3 {
+    font-size: 1.1rem;
+  }
+  .feature :global(p),
+  .feature :global(li) {
+    color: var(--bt-text-muted);
+    font-size: 0.98rem;
+  }
+  .feature__link {
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .feature__link:hover {
+    text-decoration: underline;
+  }
+</style>

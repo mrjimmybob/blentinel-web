@@ -1,0 +1,61 @@
+/*
+ * Design tokens shared by the marketing pages and the Starlight docs.
+ * Dark is the default; [data-theme='light'] switches the palette.
+ * Contrast: text and muted text meet WCAG AA on both backgrounds.
+ */
+:root {
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono:
+    ui-monospace, 'JetBrains Mono', 'Cascadia Code', 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  --bt-bg: #0f1315;
+  --bt-bg-raised: #161b1e;
+  --bt-bg-sunken: #0b0e10;
+  --bt-line: #283035;
+  --bt-line-strong: #3a454b;
+  --bt-text: #e7ebe8;
+  --bt-text-muted: #a3aeaa;
+  --bt-accent: #e0a83a; /* signal amber */
+  --bt-accent-strong: #f2c063;
+  --bt-accent-ink: #1a1305;
+  --bt-ok: #6cc4a4;
+  --bt-down: #ef7d6d;
+  --bt-focus: #f2c063;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 7rem;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 14px;
+
+  --measure: 68ch;
+  --page-max: 72rem;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root[data-theme='light'] {
+  --bt-bg: #f6f4ee;
+  --bt-bg-raised: #ffffff;
+  --bt-bg-sunken: #ece9e1;
+  --bt-line: #d9d4c7;
+  --bt-line-strong: #bdb6a5;
+  --bt-text: #161b1d;
+  --bt-text-muted: #4c5656;
+  --bt-accent: #8f5a00;
+  --bt-accent-strong: #6e4500;
+  --bt-accent-ink: #ffffff;
+  --bt-ok: #1f7a5a;
+  --bt-down: #b23a2a;
+  --bt-focus: #8f5a00;
+}

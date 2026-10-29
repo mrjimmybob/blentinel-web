@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+
+<Base title="Page not found" description="This page does not exist.">
+  <section class="wrap nf">
+    <p class="eyebrow">404</p>
+    <h1>No report from this address.</h1>
+    <p>The page you asked for doesn’t exist, or has moved.</p>
+    <p>
+      <a class="btn btn--primary" href={base}>
+        Home
+      </a>{' '}
+      <a class="btn" href={`${base}docs/`}>
+        Documentation
+      </a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: var(--space-9);
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  h1 {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+  p:not(.eyebrow) {
+    color: var(--bt-text-muted);
+  }
+</style>

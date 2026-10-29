@@ -1,0 +1,36 @@
+/* Map the shared tokens onto Starlight's theme variables. */
+:root {
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+  --sl-color-accent-low: #3a2a0c;
+  --sl-color-accent: var(--bt-accent);
+  --sl-color-accent-high: #f7d99a;
+  --sl-color-white: var(--bt-text);
+  --sl-color-gray-1: #dfe4e1;
+  --sl-color-gray-2: #bfc8c4;
+  --sl-color-gray-3: var(--bt-text-muted);
+  --sl-color-gray-4: #6b7672;
+  --sl-color-gray-5: var(--bt-line-strong);
+  --sl-color-gray-6: var(--bt-bg-raised);
+  --sl-color-black: var(--bt-bg);
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #f3e2bf;
+  --sl-color-accent: var(--bt-accent);
+  --sl-color-accent-high: #4a2e00;
+  --sl-color-white: var(--bt-text);
+  --sl-color-gray-1: #232a2c;
+  --sl-color-gray-2: #353d3f;
+  --sl-color-gray-3: var(--bt-text-muted);
+  --sl-color-gray-4: #7a8282;
+  --sl-color-gray-5: var(--bt-line);
+  --sl-color-gray-6: var(--bt-bg-sunken);
+  --sl-color-gray-7: #f1eee6;
+  --sl-color-black: var(--bt-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--bt-focus);
+  outline-offset: 2px;
+}

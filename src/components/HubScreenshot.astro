@@ -1,0 +1,96 @@
+---
+/**
+ * A framed screenshot of the hub's web UI. Dark and light variants follow
+ * `html[data-theme]`, the same switch as the rest of the site. The images are
+ * the project's own README screenshots with private host names and addresses
+ * redacted. Astro emits AVIF and WebP at several widths.
+ */
+import { Picture } from 'astro:assets';
+import shotDark from '../assets/hub-company-view-dark.png';
+import shotLight from '../assets/hub-company-view-light.png';
+
+const alt =
+  "The Blentinel hub's company view: an uptime chart for the last 24 hours, and a probes table with one probe marked Critical whose checks list SQL Server as Down (no route to host) and a NAS, a router and a media player as Up, with latency and a Silence button for each.";
+const widths = [640, 960, 1276];
+const sizes = '(max-width: 72rem) calc(100vw - 2.5rem), 72rem';
+---
+
+<figure class="shot">
+  <div class="shot__frame">
+    <div class="shot__bar" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="shot__media shot__media--dark">
+      <Picture
+        src={shotDark}
+        formats={['avif', 'webp']}
+        widths={widths}
+        sizes={sizes}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="shot__media shot__media--light">
+      <Picture
+        src={shotLight}
+        formats={['avif', 'webp']}
+        widths={widths}
+        sizes={sizes}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+  <figcaption>
+    The hub’s company view, from the project’s README (July 2026). Host names and addresses are
+    redacted. The interface has gained pages since; it is pre-alpha and still changing.
+  </figcaption>
+</figure>
+
+<style>
+  .shot {
+    margin: 0;
+  }
+  .shot__frame {
+    border: 1px solid var(--bt-line-strong);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    background: var(--bt-bg-sunken);
+  }
+  .shot__bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--bt-line);
+  }
+  .shot__bar span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bt-line-strong);
+  }
+  .shot__media--light {
+    display: none;
+  }
+  :global([data-theme='light']) .shot__media--dark {
+    display: none;
+  }
+  :global([data-theme='light']) .shot__media--light {
+    display: block;
+  }
+  .shot :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  figcaption {
+    margin-top: var(--space-4);
+    color: var(--bt-text-muted);
+    font-size: 0.95rem;
+    max-width: var(--measure);
+  }
+</style>

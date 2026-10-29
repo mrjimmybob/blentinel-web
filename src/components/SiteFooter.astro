@@ -1,0 +1,130 @@
+---
+import logo from '../assets/blentinel.svg?url';
+import { repoFile, site } from '../data/site';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const groups = [
+  {
+    title: 'Documentation',
+    links: [
+      { label: 'Introduction', href: `${base}docs/` },
+      { label: 'Architecture', href: `${base}docs/architecture/` },
+      { label: 'Security model', href: `${base}docs/security/` },
+      { label: 'Project status', href: `${base}docs/status/` },
+    ],
+  },
+  {
+    title: 'Get started',
+    links: [
+      { label: 'Install the hub', href: `${base}docs/getting-started/hub/` },
+      { label: 'Install a probe', href: `${base}docs/getting-started/probe/` },
+      { label: 'Build from source', href: `${base}docs/getting-started/build/` },
+      { label: 'Checks', href: `${base}docs/reference/checks/` },
+    ],
+  },
+  {
+    title: 'Project',
+    links: [
+      { label: 'Source on GitHub', href: site.repo },
+      { label: 'Changelog', href: repoFile('CHANGELOG.md') },
+      { label: 'Roadmap', href: repoFile('docs/ROADMAP.md') },
+      { label: 'Contributing', href: repoFile('CONTRIBUTING.md') },
+    ],
+  },
+] as const;
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div class="site-footer__about">
+      <div class="site-footer__brand">
+        <img class="site-footer__logo" src={logo} alt="" width="64" height="64" decoding="async" />
+        <div>
+          <p class="site-footer__name">{site.name}</p>
+          <p>
+            The <em>Bl</em>ind S<em>entinel</em>. Push-based monitoring for networks you can’t reach
+            into. Open source under the <a href={repoFile('LICENSE')}>MIT licence</a>. Pre-alpha.
+          </p>
+        </div>
+      </div>
+    </div>
+    {groups.map((g) => (
+      <nav aria-label={g.title}>
+        <p class="site-footer__heading">{g.title}</p>
+        <ul>
+          {g.links.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    ))}
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--bt-line);
+    background: var(--bt-bg-sunken);
+    padding-block: var(--space-7);
+    font-size: 0.95rem;
+    color: var(--bt-text-muted);
+  }
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  }
+  .site-footer__brand {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .site-footer__logo {
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: contain;
+    background: #0b0e10;
+    border-radius: var(--radius-m);
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+  .site-footer__name,
+  .site-footer__heading {
+    color: var(--bt-text);
+    font-weight: 700;
+    margin-bottom: var(--space-3);
+  }
+  .site-footer__heading {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .site-footer__brand p:last-child {
+    max-width: 34ch;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  a {
+    color: var(--bt-text-muted);
+  }
+  a:hover {
+    color: var(--bt-text);
+  }
+  @media (max-width: 52rem) {
+    .site-footer__inner {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .site-footer__about {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
