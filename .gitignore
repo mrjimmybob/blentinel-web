@@ -4,6 +4,7 @@ node_modules/
 # build output
 dist/
 .astro/
+dist.zip
 
 # logs and local env
 npm-debug.log*
